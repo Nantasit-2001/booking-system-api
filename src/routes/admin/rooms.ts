@@ -1,6 +1,6 @@
   // server/routes/rooms.ts
   import { FastifyInstance } from 'fastify';
-  import { prisma } from '../../../lib/prisma';
+  import { prisma } from '../../lib/prisma';
 
   export default async function adminRoomRoutes(fastify: FastifyInstance) {
     console.log(">>> adminRoomRoutes registered")

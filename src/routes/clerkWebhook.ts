@@ -1,6 +1,6 @@
 // server/routes/clerkWebhook.ts
 import { FastifyInstance } from 'fastify';
-import { prisma } from '../../lib/prisma';
+import { prisma } from '../lib/prisma';
 
 export default async function clerkWebhook(fastify: FastifyInstance) {
   fastify.post('/clerk/webhook', async (request, reply) => {
