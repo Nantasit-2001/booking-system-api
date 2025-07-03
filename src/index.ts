@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import roomsRoutes from './routes/rooms';
 import adminRoomRoutes from './routes/admin/rooms';
 import clerkWebhook from './routes/clerkWebhook';
+import auth from './routes/auth';
 const fastify = Fastify({ logger: true });
 
 const start = async () => {
@@ -12,6 +13,7 @@ const start = async () => {
   fastify.register(clerkWebhook, { prefix: '/webhooks' });
   fastify.register(roomsRoutes, { prefix: '/rooms' });
   fastify.register(adminRoomRoutes, { prefix: '/admin/rooms' });
+  fastify.register(auth,{prefix:'/auth'})
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' });
     console.log('Server running on http://localhost:3001');

@@ -26,6 +26,7 @@ export default async function clerkWebhook(fastify: FastifyInstance) {
             email,
             name: `${user.first_name} ${user.last_name}`,
             clerkId: user.id,
+            role: 'user',
           },
         });
         reply.send({ message: 'User created in DB' });
