@@ -9,6 +9,7 @@ const fastify = Fastify({ logger: true });
 const start = async () => {
   await fastify.register(cors, {
     origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
   });
   fastify.register(clerkWebhook, { prefix: '/webhooks' });
   fastify.register(roomsRoutes, { prefix: '/rooms' });

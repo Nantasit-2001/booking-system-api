@@ -6,8 +6,6 @@ export default async function auth(fastify: FastifyInstance) {
     // POST /role
     fastify.get('/role', { preHandler: authOptional }, async (request, reply) => {
         const auth = (request as any).auth;
-        console.log("------------------------------------------------")
-        console.log(auth.sub)
         if (!auth) {
             // ยังไม่ได้ login
             return reply.code(200).send({ role: 'guest' });

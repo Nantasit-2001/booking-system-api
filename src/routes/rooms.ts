@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { prisma } from '../lib/prisma';
-
 export default async function roomsRoutes(fastify: FastifyInstance) {
   // GET /rooms
+
 fastify.get('/type', async () => {
     // ดึงเฉพาะห้องที่ available และ type ไม่ซ้ำกัน
     const rooms = await prisma.rooms.findMany({
@@ -13,43 +13,54 @@ fastify.get('/type', async () => {
     return rooms;
 });
 
-fastify.post('/filter', async (request) => {
-    const { FilterRoom, check_in, check_out } = request.body as {
-        FilterRoom: { type?: string; price?: number; guests?: number };
-        check_in: string;
-        check_out: string;
-    };
-
-    // 1. กรองห้องตาม FilterRoom
-    const filteredRooms = await prisma.rooms.findMany({
-        where: {
-            ...(FilterRoom.type && { room_type: FilterRoom.type }),
-            ...(FilterRoom.price && { price: { lte: FilterRoom.price } }),
-            ...(FilterRoom.guests && { guests: { gte: FilterRoom.guests } }),
-            room_status: 'available',
-        },
+fastify.get('/show', async () => {
+    // ดึงเฉพาะห้องที่ available และ type ไม่ซ้ำกัน
+    const rooms = await prisma.rooms.findMany({
+        where: { room_status: 'available' },
         orderBy: { id: 'asc' },
+        distinct: ['room_type']
     });
+    // แปลงข้อมูลให้เหลือแค่รูปแรกของแต่ละห้อง
+    const result = rooms.map(room => room.url_picture && room.url_picture.length > 0 ? room.url_picture[0] : null).filter(url => url !== null);
+    return result;
+});
 
-    // 2. หา id ห้องที่ถูกจอง (unavailable) ในช่วง check_in/check_out
-    const reservations = await prisma.reservation.findMany({
-        where: {
-            OR: [
-                {
-                    check_in: { lte: check_out },
-                    check_out: { gte: check_in },
+fastify.get('/available', async (request) => {
+    const { check_in, check_out } = request.query as { check_in?: string; check_out?: string };
+
+    // ถ้าไม่มี check_in หรือ check_out ให้ query ห้องว่างทั้งหมดโดยไม่กรองวันที่
+    let availableRooms;
+    if (!check_in || !check_out) {
+        availableRooms = await prisma.rooms.findMany({
+            where: { room_status: 'available' },
+            orderBy: { price: 'desc' },
+        });
+    } else {
+        // Find rooms that are available and NOT reserved in the given date range
+        availableRooms = await prisma.rooms.findMany({
+            where: {
+                room_status: 'available',
+                reservation: {
+                    // No reservation overlaps with the requested period
+                    none: {
+                        OR: [
+                            {
+                                check_in: {
+                                    lt: new Date(check_out),
+                                },
+                                check_out: {
+                                    gt: new Date(check_in),
+                                },
+                            },
+                        ],
+                    },
                 },
-            ],
-        },
-        select: { room_id: true },
-    });
-const unavailableIds: number[] = reservations.map((r:{ room_id: number }) => r.room_id);
+            },
+            orderBy: { price: 'desc' },
+        });
+    }
 
-    // 3. แยกห้องที่ว่างและไม่ว่าง
-    const available = filteredRooms.filter((room: { id: number }) => !unavailableIds.includes(room.id));
-    const unavailable = filteredRooms.filter((room: { id: number }) => unavailableIds.includes(room.id));
-
-    return { available, unavailable };
+    return availableRooms;
 });
 
 
