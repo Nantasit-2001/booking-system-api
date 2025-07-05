@@ -25,6 +25,27 @@ fastify.get('/show', async () => {
     return result;
 });
 
+ fastify.get('/:id', async (request, reply) => {
+    const { id } = request.params as { id: string };
+    try {
+      const room = await prisma.rooms.findUnique({
+        where: {
+          id: Number(id),
+        },
+      });
+
+      if (!room) {
+        return reply.status(404).send({ error: 'Room not found' });
+      }
+
+      return reply.send(room);
+    } catch (error) {
+      console.error('Error fetching room by ID:', error);
+      return reply.status(500).send({ error: 'Internal Server Error' });
+    }
+  });
+
+
 fastify.get('/available', async (request) => {
     const { check_in, check_out } = request.query as { check_in?: string; check_out?: string };
 
