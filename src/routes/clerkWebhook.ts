@@ -24,7 +24,7 @@ export default async function clerkWebhook(fastify: FastifyInstance) {
         await prisma.users.create({
           data: {
             email,
-            name: `${user.first_name} ${user.last_name}`,
+            name: `${user.username}`,
             clerkId: user.id,
             role: 'user',
           },
