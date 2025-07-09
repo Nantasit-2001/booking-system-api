@@ -4,18 +4,23 @@ import roomsRoutes from './routes/rooms';
 import adminRoomRoutes from './routes/admin/rooms';
 import clerkWebhook from './routes/clerkWebhook';
 import { bookingRoutes } from './routes/booking';
+import adminBookingRoutes from './routes/admin/booking';
+import { paymentRoutes } from './routes/payment';
 import auth from './routes/auth';
+// import dotenv from 'dotenv';
 const fastify = Fastify({ logger: true });
-
 const start = async () => {
   await fastify.register(cors, {
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
   });
+  // dotenv.config();
   fastify.register(clerkWebhook, { prefix: '/webhooks' });
   fastify.register(roomsRoutes, { prefix: '/rooms' });
   fastify.register(adminRoomRoutes, { prefix: '/admin/rooms' });
+  fastify.register(adminBookingRoutes, { prefix: '/admin/booking' });
   fastify.register(bookingRoutes, { prefix: '/booking' });
+  fastify.register(paymentRoutes, { prefix: '/payment' });
   fastify.register(auth,{prefix:'/auth'})
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' });

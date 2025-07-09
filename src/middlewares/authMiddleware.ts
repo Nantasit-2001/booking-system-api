@@ -10,14 +10,12 @@ export async function authOptional(req: FastifyRequest, reply: FastifyReply) {
     (req as any).auth = null;
     return;
   }
-
+  
   const token = authHeader.split(" ")[1];
-
   try {
     const payload = await verifyToken(token, {
       secretKey: process.env.CLERK_SECRET_KEY!,
     });
-
     // แนบ auth ลง req
     (req as any).auth = payload;
   } catch (err) {

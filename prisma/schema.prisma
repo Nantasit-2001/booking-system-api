@@ -18,17 +18,19 @@ model blocked_room {
 }
 
 model reservation {
-  id                 Int      @id @default(autoincrement())
-  user_id            Int
+  id                 Int       @id @default(autoincrement())
   room_id            Int
-  status_reservation String?  @default("pending") @db.VarChar(20)
-  check_in           DateTime @db.Date
-  check_out          DateTime @db.Date
-  total_price        Decimal? @db.Decimal(10, 2)
-  paid_amount        Decimal? @db.Decimal(10, 2)
+  status_reservation String?   @default("pending") @db.VarChar(20)
+  check_in           DateTime  @db.Date
+  check_out          DateTime  @db.Date
+  total_price        Decimal?  @db.Decimal(10, 2)
+  paid_amount        Decimal?  @db.Decimal(10, 2)
   note               String?
-  rooms              rooms    @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_reservation_room")
-  users              users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_reservation_user")
+  phone_number       String?   @db.VarChar(20)
+  clerk_id           String?   @db.VarChar(255)
+  payment            payment[]
+  rooms              rooms     @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_reservation_room")
+  users              users?    @relation(fields: [clerk_id], references: [clerkId], onDelete: NoAction, onUpdate: NoAction, map: "fk_reservation_user_clerkid")
 }
 
 model rooms {
@@ -52,4 +54,15 @@ model users {
   createdAt   DateTime?     @default(now()) @db.Timestamptz(6)
   role        String?       @db.VarChar(50)
   reservation reservation[]
+}
+
+model payment {
+  id             Int         @id @default(autoincrement())
+  reservation_id Int
+  charge_id      String      @unique
+  amount         Decimal     @db.Decimal(10, 2)
+  status         String?     @default("pending") @db.VarChar(20)
+  paid_at        DateTime?   @db.Timestamp(6)
+  created_at     DateTime?   @default(now()) @db.Timestamp(6)
+  reservation    reservation @relation(fields: [reservation_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_payment_reservation")
 }
