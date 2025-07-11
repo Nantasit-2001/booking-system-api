@@ -4,13 +4,7 @@ import { prisma } from '../lib/prisma';
 import { authOptional } from '../middlewares/authMiddleware';
 
 export async function bookingRoutes(fastify: FastifyInstance) {
-  fastify.get('/',async (request,reply) =>{
-    const booking = await prisma.reservation.findMany({
-            orderBy: { check_in: 'desc' },
-        });
-    return reply.code(201).send(booking);
-  })
-
+  
   fastify.delete('/cancelBooking', { preHandler: authOptional }, async (request, reply) => {
   const auth = (request as any).auth;
 
@@ -85,7 +79,7 @@ export async function bookingRoutes(fastify: FastifyInstance) {
       where: {
         room_id,
         status_reservation: {
-          not: 'Not yet paid', // ถ้าเป็น Not yet paid → ให้ผ่าน
+          notIn: ['Not yet paid', 'canceled']
         },
         OR: [
           {

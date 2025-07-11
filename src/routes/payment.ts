@@ -59,13 +59,15 @@ export async function paymentRoutes(fastify: FastifyInstance) {
       phoneNumber,
       specialRequests,
       totalPrice,
+      deposit,
     } = request.body as {
       roomId: number;
       checkInDate: string;
       checkOutDate: string;
       phoneNumber: string;
       specialRequests: string;
-      totalPrice: number;
+      totalPrice: number; 
+      deposit: number;
     };
     try {
       const reservation = await prisma.reservation.create({
@@ -94,7 +96,7 @@ export async function paymentRoutes(fastify: FastifyInstance) {
         },
         body: new URLSearchParams({
           type: 'promptpay',
-          amount: `${totalPrice * 100}`,
+          amount: `${deposit * 100}`,
           currency: 'thb',
         }),
       });
@@ -113,10 +115,9 @@ export async function paymentRoutes(fastify: FastifyInstance) {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          amount: `${totalPrice * 100}`,
+          amount: `${deposit * 100}`,
           currency: 'thb',
           source: source.id,
-          return_uri: 'https://yourdomain.com/booking/ok', // เปลี่ยนให้ตรงกับโปรเจกต์จริง
         }),
       });
 
@@ -130,7 +131,7 @@ export async function paymentRoutes(fastify: FastifyInstance) {
         data: {
           reservation_id: reservation.id,
           charge_id: charge.id,
-          amount: totalPrice,
+          amount: deposit,
           status: 'pending',
         },
       });
