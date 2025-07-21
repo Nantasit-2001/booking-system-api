@@ -51,7 +51,8 @@ interface OmiseSource {
 
 export async function paymentRoutes(fastify: FastifyInstance) {
   fastify.post('/create',{ preHandler: authOptional }, async (request, reply) => {
-    const auth = (request as any).auth;
+    const auth = (request as any)?.auth;
+    console.log("----------------------------------------,",auth)
     const {
       roomId,
       checkInDate,
@@ -152,7 +153,7 @@ export async function paymentRoutes(fastify: FastifyInstance) {
   fastify.get('/status',{ preHandler: authOptional }, async (request, reply) => {
     const auth = (request as any).auth;
     const chargeId = (request.query as any).chargeId as string;
-
+    console.log("------------------------",auth)
     if (!chargeId) return reply.status(400).send({ error: 'Missing chargeId' });
 
     try {

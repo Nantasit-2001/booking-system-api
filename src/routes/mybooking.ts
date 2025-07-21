@@ -19,9 +19,12 @@ export async function myroomRoutes(fastify: FastifyInstance) {
         check_out: true,
         total_price: true,
         paid_amount: true,
+        note: true,
+        phone_number: true,
         rooms: {
           select: {
             room_name: true,
+            id:true,
             room_type: true,
             url_picture: true,
           },

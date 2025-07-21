@@ -6,8 +6,7 @@ import { authOptional } from '../middlewares/authMiddleware';
 export async function bookingRoutes(fastify: FastifyInstance) {
   
   fastify.delete('/cancelBooking', { preHandler: authOptional }, async (request, reply) => {
-  const auth = (request as any).auth;
-
+  const auth = (request as any)?.auth;
   if (!auth || !auth.sub) {
     return reply.status(401).send({ message: 'Unauthorized' });
   }
@@ -71,7 +70,7 @@ export async function bookingRoutes(fastify: FastifyInstance) {
     });
 
     if (overlappingBlocked) {
-      return reply.code(409).send({ message: 'This room is currently reserved by someone else (blocked).' });
+      return reply.code(409).send({ message: 'This room is currently occupied by someone else during that time.' });
     }
 
     // ✅ ตรวจสอบ Reservation ที่จองแล้ว (ยกเว้น Not yet paid)
@@ -96,7 +95,7 @@ export async function bookingRoutes(fastify: FastifyInstance) {
     });
 
     if (overlappingReservation) {
-      return reply.code(409).send({ message: 'This room is already reserved (confirmed).' });
+      return reply.code(409).send({ message: 'This room is already reserved during that time' });
     }
 
     // ✅ Insert Blocked

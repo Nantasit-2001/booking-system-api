@@ -7,10 +7,13 @@ import { bookingRoutes } from './routes/booking';
 import adminBookingRoutes from './routes/admin/booking';
 import { paymentRoutes } from './routes/payment';
 import { myroomRoutes } from './routes/mybooking';
+import ragRoute from './routes/agent';
 import auth from './routes/auth';
+import { connectVectorDB } from './vector/vector';
 // import dotenv from 'dotenv';
 const fastify = Fastify({ logger: true });
 const start = async () => {
+  await connectVectorDB()
   await fastify.register(cors, {
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
@@ -23,6 +26,7 @@ const start = async () => {
   fastify.register(bookingRoutes, { prefix: '/booking' });
   fastify.register(paymentRoutes, { prefix: '/payment' });
   fastify.register(myroomRoutes, {prefix:'/mybooking'});
+  fastify.register(ragRoute, { prefix: '/rag' })
   fastify.register(auth,{prefix:'/auth'})
   try {
     await fastify.listen({ port: 3001, host: '0.0.0.0' });

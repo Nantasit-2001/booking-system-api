@@ -92,7 +92,6 @@ if (existingRoom) {
     // 2. ลบรูปใน Cloudinary
     if (Array.isArray(room.url_picture)) {
       const deletePromises = room.url_picture.map((url) => {
-        // ✅ ตัด https://res.cloudinary.com/.../upload/ แล้วเอาส่วนที่เหลือ
         const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z]+$/); // ดึง public_id
         const publicId = match ? match[1] : null;
 
