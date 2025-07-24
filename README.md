@@ -1,6 +1,6 @@
 # ⚙️ Hotel Booking System (Backend)
 
-This backend server supports the hotel booking platform [frontend](XXX!!!), handling API routes, authentication, database operations, vector-based AI chatbot, QR code payment, and room booking logic.  
+This backend server supports the hotel booking platform [frontend](https://github.com/Nantasit-2001/booking-system-web), handling API routes, authentication, database operations, vector-based AI chatbot, QR code payment, and room booking logic.  
 It is maintained in a separate Git repository to ensure clean separation of concerns, better modularity, and scalable development.
 
 ---
@@ -89,5 +89,5 @@ This logic ensures fairness and prevents double-booking during simultaneous sess
 
 ## 🔗 Related Links
 
-- Live Demo (frontend): [XXX!!!](XXX!)
-- Frontend repository: [XXX!!!](XXX!)
+- Live Demo: [https://booking-system-web-chi.vercel.app/](https://booking-system-web-chi.vercel.app/)
+- Frontend repository: [booking-system-web](https://github.com/Nantasit-2001/booking-system-web)
