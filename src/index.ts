@@ -9,11 +9,9 @@ import { paymentRoutes } from './routes/payment';
 import { myroomRoutes } from './routes/mybooking';
 import ragRoute from './routes/agent';
 import auth from './routes/auth';
-import { connectVectorDB } from './vector/vector';
 // import dotenv from 'dotenv';
 const fastify = Fastify({ logger: true });
 const start = async () => {
-  await connectVectorDB()
   await fastify.register(cors, {
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']

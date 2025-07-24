@@ -1,35 +1,30 @@
 // vector/vector.ts
-import { Client } from 'pg'
+import { Pool } from 'pg'
 
-const client = new Client({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false, // ปิดการตรวจสอบใบรับรอง (เหมาะสำหรับ dev เท่านั้น)
+    rejectUnauthorized: false,
   },
 })
 
-// เราจะเชื่อมต่อแค่ตอนแรกของแอปเท่านั้น
-export const connectVectorDB = async () => {
-  await client.connect()
-  console.log("✅ Connected!")
-}
 
 export const insertDocument = async (text: string, embedding: number[]) => {
   const sqlEmbeddingString = `[${embedding.join(',')}]`
 
-  await client.query(
+  await pool.query(
     'INSERT INTO documents (text, embedding) VALUES ($1, $2)',
     [text, sqlEmbeddingString]
   )
 }
 
 export const deleteDocumentById = async (id: number): Promise<void> => {
-  await client.query('DELETE FROM documents WHERE id = $1', [id])
+  await pool.query('DELETE FROM documents WHERE id = $1', [id])
   
 }
 
 export const viewDocument = async ()=>{
- const documents = await client.query(
+ const documents = await pool.query(
     'SELECT id, text FROM documents'
   )
   return documents.rows
@@ -42,7 +37,7 @@ export const searchSimilar = async (
 ) => {
   const sqlEmbeddingString = `[${embedding.join(',')}]`
 console.log(threshold)
-  const result = await client.query(
+  const result = await pool.query(
     `SELECT id, text, 1 - (embedding <=> $1::vector) AS similarity
      FROM documents
      ORDER BY embedding <-> $1::vector
